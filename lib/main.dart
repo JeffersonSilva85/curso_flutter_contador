@@ -9,26 +9,46 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: HomePage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int count = 0;
+
   void decrement() {
-    print('Decrement');
+    setState(() {
+      count--;
+    });
+    print(count);
   }
 
   void increment() {
-    print('Increment');
+    setState(() {
+      count++;
+    });
+    print(count);
   }
+
+  bool get isEmpty => count == 0;
+  // quando o ambiente está vazio
+  bool get isFull => count == 20;
+  // quando o ambiente está lotado
 
   @override
   Widget build(BuildContext context) {
+    print('Build'); // Comando que recria a tela
+
     return Scaffold(
       backgroundColor: Colors.green,
       body: Container(
@@ -41,21 +61,21 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Pode entrar!',
+            Text(
+              isFull ? 'Lotado' : 'Pode entrar!',
               style: TextStyle(
                 fontSize: 30,
-                color: Colors.red,
+                color: isFull ? Colors.red : Colors.green,
                 fontWeight: FontWeight.w700,
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.all(40),
+            Padding(
+              padding: const EdgeInsets.all(40),
               child: Text(
-                '0',
+                count.toString(),
                 style: TextStyle(
                   fontSize: 100,
-                  color: Colors.red,
+                  color: isFull ? Colors.red : Colors.green,
                 ),
               ),
             ),
@@ -63,10 +83,14 @@ class HomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
-                  onPressed: decrement,
+                  onPressed: isEmpty ? null : decrement,
+                  // trava o botão quando está vazio
                   style: TextButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor:
+                        isEmpty ? Colors.white.withOpacity(0.2) : Colors.white,
+                    // muda a cor do botão quando está vazio
                     fixedSize: const Size(100, 100),
+                    // ignore: deprecated_member_use
                     primary: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
@@ -75,7 +99,7 @@ class HomePage extends StatelessWidget {
                   child: const Text(
                     'Saiu',
                     style: TextStyle(
-                      color: Colors.red,
+                      color: Colors.green,
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
                     ),
@@ -85,10 +109,14 @@ class HomePage extends StatelessWidget {
                   width: 40,
                 ),
                 TextButton(
-                  onPressed: increment,
+                  onPressed: isFull ? null : increment,
+                  // trava o botão quando está lotado
                   style: TextButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor:
+                        isFull ? Colors.white.withOpacity(0.2) : Colors.white,
+                    // muda a cor do botão quando está lotado
                     fixedSize: const Size(100, 100),
+                    // ignore: deprecated_member_use
                     primary: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
@@ -97,7 +125,7 @@ class HomePage extends StatelessWidget {
                   child: const Text(
                     'Entrou',
                     style: TextStyle(
-                      color: Colors.red,
+                      color: Colors.green,
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
                     ),
